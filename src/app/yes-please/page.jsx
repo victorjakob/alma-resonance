@@ -154,9 +154,28 @@ export default function YesPlease() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="list">
             <YesPleaseItem>✧ Dates: May 15-18</YesPleaseItem>
-            <YesPleaseItem>✧ Price: 99,000 kr</YesPleaseItem>
+            <YesPleaseItem>
+              ✧ Price: 99,000 kr{" "}
+              <span className="text-sm block mt-1 text-gray-400">
+                (or 3 payments of 33,000 kr)
+              </span>
+            </YesPleaseItem>
             <YesPleaseItem>✧ Location: Snæfellsnes Peninsula</YesPleaseItem>
-            <YesPleaseItem>✧ More details after application</YesPleaseItem>
+            <YesPleaseItem>✧ Limited spots available</YesPleaseItem>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-white/10">
+            <h3 className="text-xl font-semibold mb-4 text-center">
+              What's Included
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <YesPleaseItem>✧ Cosy Accommodation</YesPleaseItem>
+              <YesPleaseItem>✧ Delicious vegan meals</YesPleaseItem>
+              <YesPleaseItem>✧ Cacao Ceremonies</YesPleaseItem>
+              <YesPleaseItem>✧ All practices & workshops</YesPleaseItem>
+              <YesPleaseItem>✧ Sauna & hot tub access</YesPleaseItem>
+              <YesPleaseItem>✧ Transformative experiences</YesPleaseItem>
+            </div>
           </div>
         </motion.section>
 
@@ -168,8 +187,13 @@ export default function YesPlease() {
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">
-            Application Form
+            Message us!
           </h2>
+
+          <p className="text-gray-300 max-w-[70%] mx-auto mb-6 text-center">
+            Please fill out the form below to apply for the retreat, or if you
+            simply have any questions.
+          </p>
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
@@ -240,24 +264,36 @@ export default function YesPlease() {
         </motion.section>
 
         <motion.div
-          className="text-center mt-16"
+          className="text-center mt-16 space-y-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.8 }}
         >
-          <p className="text-sm text-gray-300">
-            Questions? Email us at{" "}
-            <a
-              href="mailto:viggijakob@gmail.com"
-              className="underline hover:text-white transition-colors duration-200
-                         hover:text-white/90 relative inline-block
-                         after:content-[''] after:absolute after:bottom-0 after:left-0 
-                         after:w-full after:h-[1px] after:bg-white/50 after:scale-x-0 
-                         hover:after:scale-x-100 after:transition-transform after:duration-300"
-            >
-              viggijakob@gmail.com
-            </a>
+          <p className="text-sm text-gray-300 mb-2">
+            Connect with us on Instagram
           </p>
+          <div className="flex justify-center gap-6">
+            <a
+              href="https://www.instagram.com/victor_gressier/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-white/5 rounded-full border border-white/10 
+                       hover:bg-white/10 transition-all duration-300 
+                       hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.15)]"
+            >
+              @victor_gressier ✧
+            </a>
+            <a
+              href="https://www.instagram.com/luanaschwengber/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-white/5 rounded-full border border-white/10 
+                       hover:bg-white/10 transition-all duration-300 
+                       hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.15)]"
+            >
+              @luanaschwengber ✧
+            </a>
+          </div>
         </motion.div>
       </motion.div>
     </div>
