@@ -2,20 +2,8 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import PropTypes from "prop-types";
-
-const YesPleaseSection = ({ title, children }) => (
-  <motion.section
-    className="mb-12"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-  >
-    <h2 className="text-2xl md:text-3xl font-bold mb-4">{title}</h2>
-    {children}
-  </motion.section>
-);
+import { useForm } from "react-hook-form";
 
 const YesPleaseItem = ({ children }) => (
   <div className="mb-2 text-gray-300 text-lg" role="listitem">
@@ -59,52 +47,47 @@ FormInput.propTypes = {
 };
 
 export default function YesPlease() {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    message: "",
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm({
+    mode: "onChange", // Validate on change
+    defaultValues: {
+      fullName: "",
+      email: "",
+      phone: "",
+      message: "",
+    },
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [submitStatus, setSubmitStatus] = useState({
     success: false,
     error: null,
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const onSubmit = async (data) => {
     setSubmitStatus({ success: false, error: null });
 
     try {
-      // Replace with your actual API endpoint
       const response = await fetch("/api/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) throw new Error("Submission failed");
 
       setSubmitStatus({ success: true, error: null });
-      setFormData({ fullName: "", email: "", phone: "", message: "" });
+      reset(); // Clear form
     } catch (error) {
       setSubmitStatus({
         success: false,
         error: "Failed to submit application. Please try again.",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -194,43 +177,78 @@ export default function YesPlease() {
             Please fill out the form below to apply for the retreat, or if you
             simply have any questions.
           </p>
-          <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <FormInput
+                <input
+                  {...register("fullName", {
+                    required: "Full name is required",
+                  })}
                   type="text"
-                  name="fullName"
-                  placeholder="Full Name"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
+                  placeholder="Full Name *"
+                  className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400
+                            focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent
+                            transition-all duration-200"
+                  aria-label="Full Name"
                 />
-                <FormInput
+                {errors.fullName && (
+                  <span className="text-red-400 text-sm">
+                    {errors.fullName.message}
+                  </span>
+                )}
+
+                <input
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address",
+                    },
+                  })}
                   type="email"
-                  name="email"
-                  placeholder="Email Address"
-                  value={formData.email}
-                  onChange={handleInputChange}
+                  placeholder="Email Address *"
+                  className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400
+                            focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent
+                            transition-all duration-200"
+                  aria-label="Email Address"
                 />
-                <FormInput
+                {errors.email && (
+                  <span className="text-red-400 text-sm">
+                    {errors.email.message}
+                  </span>
+                )}
+
+                <input
+                  {...register("phone", {
+                    required: "Phone number is required",
+                  })}
                   type="tel"
-                  name="phone"
-                  placeholder="Phone Number"
-                  value={formData.phone}
-                  onChange={handleInputChange}
+                  placeholder="Phone Number *"
+                  className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400
+                            focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent
+                            transition-all duration-200"
+                  aria-label="Phone Number"
                 />
+                {errors.phone && (
+                  <span className="text-red-400 text-sm">
+                    {errors.phone.message}
+                  </span>
+                )}
               </div>
               <div className="space-y-4">
                 <textarea
-                  name="message"
-                  placeholder="Why would you like to join this retreat?"
-                  value={formData.message}
-                  onChange={handleInputChange}
+                  {...register("message", { required: "Message is required" })}
+                  placeholder="Why would you like to join this retreat? *"
                   className="w-full h-[158px] p-3 bg-white/5 border border-white/10 rounded-lg text-white 
                            placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/30 
                            focus:border-transparent transition-all duration-200"
-                  required
                   aria-label="Application Message"
-                ></textarea>
+                />
+                {errors.message && (
+                  <span className="text-red-400 text-sm">
+                    {errors.message.message}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -248,17 +266,22 @@ export default function YesPlease() {
 
             <motion.button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isValid}
               className={`w-full md:w-auto px-8 py-4 text-lg text-white 
                        bg-gradient-to-r from-white/20 to-white/10 border-2 border-white/30 
                        rounded-full transition-all duration-300 ease-in-out backdrop-blur-sm
                        hover:bg-white/30 hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.15)]
                        disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none
+                       disabled:hover:bg-white/5 disabled:hover:shadow-none
                        mx-auto block`}
-              whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
-              whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
+              whileHover={{ scale: isSubmitting || !isValid ? 1 : 1.05 }}
+              whileTap={{ scale: isSubmitting || !isValid ? 1 : 0.95 }}
             >
-              {isSubmitting ? "Submitting..." : "Submit Application ✧"}
+              {isSubmitting
+                ? "Submitting..."
+                : !isValid
+                ? "Please fill all fields ✧"
+                : "Submit Application ✧"}
             </motion.button>
           </form>
         </motion.section>
